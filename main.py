@@ -27,21 +27,24 @@ def translate(text, src="ru", dest="uk"):
 
 
 def send_msg(msg, photo=None):
-    if not photo:
-        vk.messages.send(
-            user_id=event.user_id,
-            random_id=event.random_id,
-            keyboard=keyboard.get_keyboard(),
-            message=msg
-        )
-    else:
-        vk.messages.send(
-            user_id=event.user_id,
-            random_id=event.random_id,
-            keyboard=keyboard.get_keyboard(),
-            message=msg,
-            attachment=photo,
-        )
+    try:
+        if not photo:
+            vk.messages.send(
+                user_id=event.user_id,
+                random_id=event.random_id,
+                keyboard=keyboard.get_keyboard(),
+                message=msg
+            )
+        else:
+            vk.messages.send(
+                user_id=event.user_id,
+                random_id=event.random_id,
+                keyboard=keyboard.get_keyboard(),
+                message=msg,
+                attachment=photo,
+            )
+    except BaseException:
+        pass
 
 
 session = requests.Session()
