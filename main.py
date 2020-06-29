@@ -26,13 +26,22 @@ def translate(text, src="ru", dest="uk"):
     return result.text
 
 
-def send_msg(msg):
-    vk.messages.send(
-        user_id=event.user_id,
-        random_id=event.random_id,
-        keyboard=keyboard.get_keyboard(),
-        message=msg
-    )
+def send_msg(msg, photo=None):
+    if not photo:
+        vk.messages.send(
+            user_id=event.user_id,
+            random_id=event.random_id,
+            keyboard=keyboard.get_keyboard(),
+            message=msg
+        )
+    else:
+        vk.messages.send(
+            user_id=event.user_id,
+            random_id=event.random_id,
+            keyboard=keyboard.get_keyboard(),
+            message=msg,
+            attachment=photo,
+        )
 
 
 session = requests.Session()
@@ -60,9 +69,21 @@ longpoll = MyVkLongPoll(vk_session)
 
 keyboard = VkKeyboard(one_time=True)
 
-keyboard.add_button('#Помощь#', color=VkKeyboardColor.DEFAULT)
+keyboard.add_button('#помощь#', color=VkKeyboardColor.DEFAULT)
 
-bot_words_dict = {"#помощь#": "Техническая информация, которая вам поможет.", "#пасхалка#": "Дима лох"}
+bot_words_dict = {
+    "#помощь#": """
+    Список команд:\n
+    #папа# - мой создатель №1,\n
+    #мама# - мой создатель №2
+    """,
+    "#пасхалка#": "Дима лох",
+}
+
+bot_photo_dict = {
+    "#папа#": "photo167849130_457241934",
+    "#мама#": "photo182293940_457242552"
+}
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
@@ -70,6 +91,7 @@ for event in longpoll.listen():
 
         if words[0] in bot_words_dict.keys():
             send_msg(bot_words_dict[words[0]])
+        elif words[0] in bot_photo_dict.keys():
+            send_msg(words[0], bot_photo_dict[words[0]])
         else:
             send_msg(translate(event.text))
-
