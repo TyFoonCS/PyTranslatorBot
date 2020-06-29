@@ -4,6 +4,7 @@ import requests
 import vk_api
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
 
 languages_dict = googletrans.LANGUAGES
@@ -24,10 +25,12 @@ def translate(text, src="ru", dest="uk"):
     result = translator.translate(text, src=src, dest=dest)
     return result.text
 
+
 def send_msg(msg):
     vk.messages.send(
         user_id=event.user_id,
         random_id=event.random_id,
+        keyboard=keyboard.get_keyboard(),
         message=msg
     )
 
@@ -55,10 +58,18 @@ vk = vk_session.get_api()
 upload = VkUpload(vk_session)  # Для загрузки изображений
 longpoll = MyVkLongPoll(vk_session)
 
+keyboard = VkKeyboard(one_time=True)
+
+keyboard.add_button('#Помощь#', color=VkKeyboardColor.DEFAULT)
+
+bot_words_dict = {"#помощь#": "Техническая информация, которая вам поможет.", "#пасхалка#": "Дима лох"}
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-        send_msg(translate(event.text))
+        words = event.text.lower().split()
 
+        if words[0] in bot_words_dict.keys():
+            send_msg(bot_words_dict[words[0]])
+        else:
+            send_msg(translate(event.text))
 
-print(translate("перевод на украинский язык"))
