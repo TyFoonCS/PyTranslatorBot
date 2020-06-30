@@ -29,20 +29,37 @@ def translate(text, src="ru", dest="uk"):
 def send_msg(msg, photo=None):
     try:
         if not photo:
-            vk.messages.send(
-                user_id=event.user_id,
-                random_id=event.random_id,
-                keyboard=keyboard.get_keyboard(),
-                message=msg
-            )
+            if event.from_chat:
+                vk.messages.send(
+                    chat_id=event.chat_id,
+                    random_id=event.random_id,
+                    keyboard=keyboard.get_keyboard(),
+                    message=msg
+                )
+            else:
+                vk.messages.send(
+                    user_id=event.user_id,
+                    random_id=event.random_id,
+                    keyboard=keyboard.get_keyboard(),
+                    message=msg
+                )
         else:
-            vk.messages.send(
-                user_id=event.user_id,
-                random_id=event.random_id,
-                keyboard=keyboard.get_keyboard(),
-                message=msg,
-                attachment=photo,
-            )
+            if event.from_chat:
+                vk.messages.send(
+                    chat_id=event.chat_id,
+                    random_id=event.random_id,
+                    keyboard=keyboard.get_keyboard(),
+                    message=msg,
+                    attachment=photo
+                )
+            else:
+                vk.messages.send(
+                    user_id=event.user_id,
+                    random_id=event.random_id,
+                    keyboard=keyboard.get_keyboard(),
+                    message=msg,
+                    attachment=photo
+                )
     except BaseException:
         pass
 
