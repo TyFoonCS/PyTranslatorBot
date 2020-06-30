@@ -21,8 +21,8 @@ class MyVkLongPoll(VkLongPoll):
                 print('error vk', e)
 
 
-def translate(text, src="ru", dest="uk"):
-    result = translator.translate(text, src=src, dest=dest)
+def translate(text, dest="uk"):
+    result = translator.translate(text, dest=dest)
     return result.text
 
 
