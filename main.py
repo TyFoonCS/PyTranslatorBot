@@ -89,20 +89,20 @@ longpoll = MyVkLongPoll(vk_session)
 
 keyboard = VkKeyboard(one_time=True)
 
-keyboard.add_button('#помощь#', color=VkKeyboardColor.DEFAULT)
+keyboard.add_button('/помощь', color=VkKeyboardColor.DEFAULT)
 
 bot_words_dict = {
-    "#помощь#": """
+    "/помощь": """
     Список команд:\n
-    #папа# - мой создатель №1,\n
-    #мама# - мой создатель №2
+    /папа - мой создатель №1,\n
+    /мама - мой создатель №2
     """,
-    "#пасхалка#": "Дима лох",
+    "/пасхалка": "Бондарь лох",
 }
 
 bot_photo_dict = {
-    "#папа#": "photo167849130_457241934",
-    "#мама#": "photo182293940_457242552"
+    "/папа": "photo167849130_457241934",
+    "/мама": "photo182293940_457242552"
 }
 
 for event in longpoll.listen():
@@ -113,5 +113,7 @@ for event in longpoll.listen():
             send_msg(bot_words_dict[words[0]])
         elif words[0] in bot_photo_dict.keys():
             send_msg(words[0], bot_photo_dict[words[0]])
+        elif event.text[0] == '/' and words[0][1:] in languages_dict.keys():
+            send_msg(translate(event.text[3:], dest=words[0][1:]))
         else:
             send_msg(translate(event.text))
